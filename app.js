@@ -56,7 +56,8 @@ var fileChecker = String(output[4]);
 var imageServe = function(){
     fs.readFile(fileP + ".jpg", function (err, content) {
           if (err) {
-              res.writeHead(400, {'Content-type':'text/html'})
+              res.writeHead(400, {'Content-type':'text/html'});
+              res.end("Image cannot be served, Reason might be image not exist ! Please check the requested image on the server to verify");
               console.log(err);
           } else {
               //specify the content type in the response will be an image
