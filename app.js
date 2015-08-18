@@ -35,30 +35,23 @@ var url  = require('url');
 var im = require("imagemagick");
 var fs = require('fs');
 var mkdirp = require('mkdirp');
-//var tiler = require('./tiler');
 
 // Here we start to create the sever
 var server = http.createServer(function(req, res) {
 console.time('execution_time');
+
 // Parsing String from the URL
 var url_parts = url.parse(req.url, true);
 var query = url_parts.query;
 var fileP = query.url;
 var fileUrl = String(query.url);
 
-
 var output = fileUrl.split('/');
 output.splice(6, 1);
 filePath = output.join('/');
 
 //explode the URL and gets the clean url to Origin of the image.
-
-/*console.log("1------>"+fileP); 
-console.log("2------>"+fileUrl);
-console.log("3------>"+filePath);*/
 var fileChecker = String(output[4]);
-/*console.log("2------>"+output); 
-console.log("4------>"+fileChecker); */
 
 var imageServe = function(){
     fs.readFile(fileP + ".jpg", function (err, content) {
@@ -103,8 +96,8 @@ var convertFunct = function(filePath) {
 
 convertFunct(filePath);
 
-
-console.timeEnd('execution_time');
+    //Check the execution time
+    console.timeEnd('execution_time');
 }).listen(8080, function(){
   console.log('http://localhost:8080?url=IMAGE_URL_HERE');
 })
