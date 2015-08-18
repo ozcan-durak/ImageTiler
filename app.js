@@ -17,7 +17,7 @@
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
  *
- *    The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
  *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -34,47 +34,77 @@ var http = require("http");
 var url  = require('url');
 var im = require("imagemagick");
 var fs = require('fs');
+var mkdirp = require('mkdirp');
+//var tiler = require('./tiler');
 
 // Here we start to create the sever
 var server = http.createServer(function(req, res) {
+console.time('execution_time');
 // Parsing String from the URL
 var url_parts = url.parse(req.url, true);
 var query = url_parts.query;
+var fileP = query.url;
+var fileUrl = String(query.url);
 
-res.end(query.url+"/pano-0-0-0.jpg");
-if (!fs.existsSync(query.url+"/pano-0-0-0.jpg")){
 
-// To check if the file exists
-var fileChecker = query.url;
-if (!fs.existsSync(fileChecker)){
-    fs.mkdirSync(fileChecker);
-}
+var output = fileUrl.split('/');
+output.splice(6, 1);
+filePath = output.join('/');
 
-// Arguments to Call
-var args = [
-  query.url+".jpg",                                             // image location
-  "-crop",                                                      // will crop the tiles
-  "512x512",                                                    // Tile Size
-  "-set",             
-  "filename:tile",
-  query.url+"/pano-%[fx:page.x/512]-%[fx:page.y/512]",          // {512} value should be same as your tile size. 
-  "%[filename:tile]-0.jpg"                                      
-];
+//explode the URL and gets the clean url to Origin of the image.
 
-// Function to crop
-im.convert(args, function(err) {
-    if(err) { throw err; }
-    res.end("Image crop complete");
-  });
+/*console.log("1------>"+fileP); 
+console.log("2------>"+fileUrl);
+console.log("3------>"+filePath);*/
+var fileChecker = String(output[4]);
+/*console.log("2------>"+output); 
+console.log("4------>"+fileChecker); */
 
-}
+var imageServe = function(){
+    fs.readFile(fileP + ".jpg", function (err, content) {
+          if (err) {
+              res.writeHead(400, {'Content-type':'text/html'})
+              console.log(err);
+          } else {
+              //specify the content type in the response will be an image
+              res.writeHead(200,{'Content-type':'image/jpg'});
+              res.end(content);
+          }
+      });  
 
- /*Pictures will be suppliead in JSON 
- This part is a TODO.*/
 
-console.log(query); //{Object}
-  res.end("End");
+var convertFunct = function(filePath) {
+    if (!fs.existsSync(filePath)){
+         mkdirp(filePath);
+         console.log("File wasn't exists, so its been created = "+ fileChecker)
+         
+          var args = [
+          filePath+".jpg",                                                                              // image location
+          "-crop", "256x256",
+          "-strip", "-profile", "profile.icm",                                                          // will crop the tiles
+          "-quality", "90%",                                                                            // Tile Size
+          "-set",  "filename:tile",             
+          filePath+"/%[fx:page.x/256]-%[fx:page.y/256]", "%[filename:tile]-0.jpg"             // {512} value should be same as your tile size.                                       
+          ];
 
+          // Function to crop
+          im.convert(args, function(err) {
+            imageServe();
+             });
+
+          //Removes the undefined folder if created by Nodejs bug (related with :51)
+        if (fs.existsSync("undefined")) {
+          fs.rmdir("undefined");
+         };
+    } else {
+        imageServe();
+    }
+};
+
+convertFunct(filePath);
+
+
+console.timeEnd('execution_time');
 }).listen(8080, function(){
-  console.log('http://localhost:8080?url=pano');
+  console.log('http://localhost:8080?url=IMAGE_URL_HERE');
 })
