@@ -30,23 +30,20 @@
  */
 
 // Required Modules to run the service
-var http = require("http");
-var url  = require('url');
-var im = require("imagemagick");
-var fs = require('fs');
-var mkdirp = require('mkdirp');
-//var nodemailer = require('nodemailer');
-var querystring = require('querystring');
-var favicon = require('serve-favicon');
-var finalhandler = require('finalhandler');
+var http = require("http"),
+    url  = require('url'),
+    im = require("imagemagick"),
+    fs = require('fs'),
+    mkdirp = require('mkdirp'),
+    favicon = require('serve-favicon'),
+    finalhandler = require('finalhandler');
 
-// Here we start to create the sever
+    //var nodemailer = require('nodemailer'),
 
 var _favicon = favicon(__dirname + '/public/favicon.ico');
+
+// Here we start to create the sever
 var server = http.createServer(function(req, res) {
-
-
-
 
     //to check execution time
     console.time('execution_time');
@@ -148,7 +145,7 @@ var server = http.createServer(function(req, res) {
         res.statusCode = 404;
     });
 
-    console.log("convertFunct cagirilacak bitti");
+    Buconsole.log("convertFunct cagirilacak bitti");
 
     //Check the execution time
     console.timeEnd('execution_time');
