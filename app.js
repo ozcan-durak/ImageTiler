@@ -1,6 +1,6 @@
 /** ImageTiler with NodeJS
  *  ================================================================================
- *  Node Js service to serve ImageTiles,
+ *  Node Js service to serve ImageTiles, Send Emails if it fails !
  *  ================================================================================
  *  @category
  *  @package     ImageTiler
@@ -145,10 +145,10 @@ var server = http.createServer(function(req, res) {
         res.statusCode = 404;
     });
 
-    Buconsole.log("convertFunct cagirilacak bitti");
+    console.log("convertFunct cagirilacak bitti");
 
     //Check the execution time
     console.timeEnd('execution_time');
 }).listen(8080, function(){
-  console.log('http://localhost:8080?url=IMAGE_URL_HERE_WITHOUT')
+  console.log('http://localhost:8080?url=IMAGE_URL_HERE_WITHOUT.JPG')
 });
