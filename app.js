@@ -29,6 +29,10 @@
  *  ================================================================================
  */
 
+// TODO Current Bug:
+// Request for Favicon, that cause to reload pages twice, doesn't cause any performance issue but still needs to fixed.
+// Favicon issue is resolved but this time "Can't set headers after they are sent."
+
 // Required Modules to run the service
 var http = require("http"),
     url  = require('url'),
