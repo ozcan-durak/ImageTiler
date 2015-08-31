@@ -40,11 +40,9 @@ var http = require("http"),
     fs = require('fs'),
     mkdirp = require('mkdirp'),
     favicon = require('serve-favicon'),
-    finalhandler = require('finalhandler');
-
+    finalhandler = require('finalhandler'),
+    _favicon = favicon(__dirname + '/public/favicon.ico');
     //var nodemailer = require('nodemailer'),
-
-var _favicon = favicon(__dirname + '/public/favicon.ico');
 
 // Here we start to create the sever
 var server = http.createServer(function(req, res) {
@@ -53,14 +51,14 @@ var server = http.createServer(function(req, res) {
     console.time('execution_time');
 
     // Parsing String from the URL
-    var url_parts = url.parse(req.url, true);
-    var query = url_parts.query;
-    var fileP = query.url;
-    var fileUrl = String(query.url);
+    var url_parts = url.parse(req.url, true),
+        query = url_parts.query,
+        fileP = query.url,
+        fileUrl = String(query.url),
 
-    var output = fileUrl.split('/');
-    output.splice(6, 1);
-    filePath = output.join('/');
+        output = fileUrl.split('/');
+        output.splice(6, 1);
+        filePath = output.join('/');
 
         //explode the URL and gets the clean url to Origin of the image.
         var fileChecker = String(output[4]);
