@@ -31,7 +31,7 @@
 
 // TODO Current Bug:
 // Request for Favicon, that cause to reload pages twice, doesn't cause any performance issue but still needs to fixed.
-// Favicon issue is resolved but this time "Can't set headers after they are sent."
+// Favicon issue is resolved but this time "Can't set headers after they are sent." error is appearing.
 
 // Required Modules to run the service
 var http = require("http"),
@@ -57,6 +57,7 @@ var server = http.createServer(function(req, res) {
         fileUrl = String(query.url),
 
         output = fileUrl.split('/');
+        //manage this part as you wish to slice your url or disable it.
         output.splice(6, 1);
         filePath = output.join('/');
 
