@@ -82,18 +82,14 @@ var server = http.createServer(function(req, res) {
         };*/
 
         var imageServe = function() {
-            console.log("imageServe");
             fs.readFile(fileP + ".jpg", function (err, content) {
                 if (err) {
 
-                    console.log("imageServe if ");
                     res.writeHead(400, {'Content-type': 'text/html'});
-                    //res.end("Image cannot be served, Reason might be image not exist ! Please check the requested image on the server to verify");
+                    res.end("Image cannot be served, Reason might be image not exist ! Please check the requested image on the server to verify");
                     console.log(err);
-
                 } else {
 
-                    console.log("imageServe else ");
                     //specify the content type in the response will be an image
                     res.writeHead(200, {'Content-type': 'image/jpg'});
                     res.end(content);
@@ -104,11 +100,7 @@ var server = http.createServer(function(req, res) {
         //Tiles the image.
         var convertFunct = function(filePath) {
 
-            console.log("convertFunct ");
-
             if (!fs.existsSync(filePath)){
-                console.log("convertFunct if ");
-
 
                 mkdirp(filePath);
                  console.log("File wasn't exists, so its been created = "+filePath);
@@ -128,15 +120,9 @@ var server = http.createServer(function(req, res) {
                      });
 
             } else {
-
-                console.log("convertFunct else ");
-
                 imageServe();
             }
         };
-
-
-    console.log("convertFunct cagirilacak ");
 
         convertFunct(filePath);
 
@@ -144,12 +130,8 @@ var server = http.createServer(function(req, res) {
 
     _favicon(req, res, function onNext(err) {
 
-
         res.statusCode = 404;
     });
-
-    console.log("convertFunct cagirilacak bitti");
-
     //Check the execution time
     console.timeEnd('execution_time');
 }).listen(8080, function(){
