@@ -30,8 +30,7 @@
  */
 
 // TODO Current Bug:
-// Request for Favicon, that cause to reload pages twice, doesn't cause any performance issue but still needs to fixed.
-// Favicon issue is resolved but this time "Can't set headers after they are sent." error is appearing.
+// On Browser "Can't set headers after they are sent." error is appearing. Works fine with post request on such as (Postman, etc..)
 
 // Required Modules to run the service
 var http = require("http"),
@@ -39,9 +38,7 @@ var http = require("http"),
     im = require("imagemagick"),
     fs = require('fs'),
     mkdirp = require('mkdirp'),
-    favicon = require('serve-favicon'),
-    finalhandler = require('finalhandler'),
-    _favicon = favicon(__dirname + '/public/favicon.ico');
+    favicon = require('serve-favicon');
     //var nodemailer = require('nodemailer'),
 
 // Here we start to create the sever
@@ -61,79 +58,81 @@ var server = http.createServer(function(req, res) {
         output.splice(6, 1);
         filePath = output.join('/');
 
-        //explode the URL and gets the clean url to Origin of the image.
-        var fileChecker = String(output[4]);
+    //explode the URL and gets the clean url to Origin of the image.
+    var fileChecker = String(output[4]);
 
-        //send email if the service fails
-       /* var transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-                user: 'imagetiler@gmail.com',
-                pass: 'xxx'
-            }
-        });*/
-
-       /* var mailOptions = {
-            from: 'Image Tiler Service ✔ <imagetiler@gmail.com>', // sender address
-            to: 'ozcan.durak@ankageo.com', // list of receivers
-            subject: 'ImageTiler Has failed', // Subject line
-            text: 'Check immediately', // plaintext body
-            html: '<b>Image cannot be served, Reason might be image not exist ! Please check the requested image on the server to verify</b>' // html body
-        };*/
-
-        var imageServe = function() {
-            fs.readFile(fileP + ".jpg", function (err, content) {
-                if (err) {
-
-                    res.writeHead(400, {'Content-type': 'text/html'});
-                    res.end("Image cannot be served, Reason might be image not exist ! Please check the requested image on the server to verify");
-                    console.log(err);
-                } else {
-
-                    //specify the content type in the response will be an image
-                    res.writeHead(200, {'Content-type': 'image/jpg'});
-                    res.end(content);
-                }
-            });
+   //send email if the service fails
+   /* var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'imagetiler@gmail.com',
+            pass: 'xxx'
         }
+    });*/
 
-        //Tiles the image.
-        var convertFunct = function(filePath) {
+   /* var mailOptions = {
+        from: 'Image Tiler Service ✔ <imagetiler@gmail.com>', // sender address
+        to: 'ozcan.durak@ankageo.com', // list of receivers
+        subject: 'ImageTiler Has failed', // Subject line
+        text: 'Check immediately', // plaintext body
+        html: '<b>Image cannot be served, Reason might be image not exist ! Please check the requested image on the server to verify</b>' // html body
+    };*/
 
-            if (!fs.existsSync(filePath)){
+    var imageServe = function() {
+        fs.readFile(fileP + ".jpg", function (err, content) {
+            if (err) {
 
-                mkdirp(filePath);
-                 console.log("File wasn't exists, so its been created = "+filePath);
-
-                  var args = [
-                  filePath+".jpg",
-                  "-crop", "256x256",
-                  "-strip", "-profile", "profile.icm",
-                  "-quality", "90%",
-                  "-set",  "filename:tile",
-                  filePath+"/%[fx:page.x/256]-%[fx:page.y/256]", "%[filename:tile]-0.jpg"
-                  ];
-
-                  // Function to crop
-                  im.convert(args, function(err) {
-                    imageServe();
-                     });
-
+                res.writeHead(400, {'Content-type': 'text/html'});
+                res.end("Image cannot be served, Reason might be image not exist ! Please check the requested image on the server to verify");
+                console.log(err);
             } else {
-                imageServe();
+
+                //specify the content type in the response will be an image
+                res.writeHead(200, {'Content-type': 'image/jpg'});
+                res.end(content);
             }
-        };
+        });
+    }
 
-        convertFunct(filePath);
+    //Tiles the image.
+    var convertFunct = function(filePath) {
 
-    var done = finalhandler(req, res);
+        if (!fs.existsSync(filePath)){
 
+            mkdirp(filePath);
+             console.log("File wasn't exists, so its been created = "+filePath);
+
+              var args = [
+              filePath+".jpg",
+              "-crop", "256x256",
+              "-strip", "-profile", "profile.icm",
+              "-quality", "90%",
+              "-set",  "filename:tile",
+              filePath+"/%[fx:page.x/256]-%[fx:page.y/256]", "%[filename:tile]-0.jpg"
+              ];
+
+              // Function to crop
+              im.convert(args, function(err) {
+                imageServe();
+                 });
+
+        } else {
+            imageServe();
+        }
+    };
+
+    convertFunct(filePath);
+
+    //var done = finalhandler(req, res);
+
+    //Favicon Request
+    _favicon = favicon(__dirname + '/public/favicon.ico');
     _favicon(req, res, function onNext(err) {
-
         res.statusCode = 404;
     });
+
     //Check the execution time
     console.timeEnd('execution_time');
 }).listen(8080, function(){
-  console.log('http://localhost:8080?url=IMAGE_URL_HERE_WITHOUT.JPG')
-});
+    console.log('http://localhost:8080?url=IMAGE_URL_HERE_WITHOUT.JPG')
+    });
